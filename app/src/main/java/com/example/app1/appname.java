@@ -10,7 +10,7 @@ import java.util.List;
 public class appname {
     public String getAllAppNames(Context context){
         PackageManager pm = context.getPackageManager();
-        ////获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
+        //获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
         @SuppressLint("QueryPermissionsNeeded") List<PackageInfo> list2 = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
         StringBuilder appname = new StringBuilder(getAppNumber(context));
 

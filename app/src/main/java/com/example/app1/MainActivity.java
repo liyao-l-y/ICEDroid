@@ -31,7 +31,6 @@ import com.darvin.security.detectfrida;
 
 public class MainActivity extends AppCompatActivity {
     result rs = new result();
-
     String rootcheck;
     String emulatorcheck;
     String hookcheck;
