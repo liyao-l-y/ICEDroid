@@ -1,0 +1,50 @@
+name: Build & Publish Release APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Gradle:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+    - name: setup jdk
+      uses: actions/setup-java@v1
+      with:
+        java-version: 17
+    
+    - name: Accept Android Licenses
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+    
+    - name: Make Gradle executable
+      run: chmod +x ./gradlew
+    
+    - name: Build Release APK
+      run: ./gradlew assembleRelease
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/
+
+    - name: 获取新版本号
+      id: get__version
+      run: |
+        # 尝试从 package.json 中获取版本号
+        VERSION=$(node -p "require('./chrome-extension/package.json').version" 2>/dev/null || echo "v0.0.1")
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "New version:${VERSION}"
+
+    - name: 创建Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.VERSION }}
+        name: apk-${{ env.VERSION }}
+        draft: false
+        prerelease: false
+        files: |
+          app/build/outputs/apk/release/*.apk

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="menu">
+        <item>menu</item>
+        <item>获取完整检测结果</item>
+        <item>查看记录</item>
+        <item>更新内部文件</item>
+        <item>更新外部存储</item>
+        <item>传输数据</item>
+        <item>frida深度检测</item>
+        <item>magisk深度检测</item>
+        <item>xposed深度检测</item>
+    </string-array>
+</resources>

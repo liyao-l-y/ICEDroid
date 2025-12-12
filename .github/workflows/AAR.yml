@@ -1,0 +1,80 @@
+name: Build & Publish AAR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Gradle:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+
+
+    - name: Patch build.gradle.kts
+      run: |
+        # 替换插件类型
+        sed -i 's/alias(libs.plugins.android.application)/id("com.android.library")/g' app/build.gradle.kts
+        
+        # 删除 applicationId 配置
+        sed -i '/applicationId = "com.example.app1"/d' app/build.gradle.kts
+        sed -i '/versionCode = 1/d' app/build.gradle.kts
+        sed -i '/versionName = "1.0"/d' app/build.gradle.kts
+
+    - name: Patch AndroidManifest
+      run: |
+        # 清理 application 标签属性
+        sed -i '/android:dataExtractionRules/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:fullBackupContent/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:icon/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:label/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:roundIcon/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:theme/d' app/src/main/AndroidManifest.xml
+        sed -i '/tools:targetApi/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:preserveLegacyExternalStorage/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:requestLegacyExternalStorage/d' app/src/main/AndroidManifest.xml
+        sed -i '/android:networkSecurityConfig/d' app/src/main/AndroidManifest.xml
+
+        # 删除 MAIN/LAUNCHER intent-filter
+        sed -i '/<intent-filter>/,/<\/intent-filter>/d' app/src/main/AndroidManifest.xml
+
+    
+    - name: setup jdk
+      uses: actions/setup-java@v1
+      with:
+        java-version: 17
+    
+    - name: Accept Android Licenses
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+    
+    - name: Make Gradle executable
+      run: chmod +x ./gradlew
+    
+    - name: Build Release AAR
+      run: ./gradlew assembleRelease
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: app-aar
+        path: app/build/outputs/aar/*.aar
+
+    - name: 获取新版本号
+      id: get__version
+      run: |
+        # 尝试从 package.json 中获取版本号
+        VERSION=$(node -p "require('./chrome-extension/package.json').version" 2>/dev/null || echo "v0.0.1")
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "New version:${VERSION}"
+
+    - name: 创建Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.VERSION }}
+        name: aar-${{ env.VERSION }}
+        draft: false
+        prerelease: false
+        files: |
+          app/build/outputs/aar/*.aar

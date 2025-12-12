@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">ICEDroid</string>
+    <string name="app_version">v1.0.0</string>
+    <string name="root检测">ROOT检测</string>
+    <string name="模拟器检测">模拟器检测</string>
+    <string name="设备指纹检测">设备指纹检测</string>
+    <string name="返回">返回</string>
+    <string name="native检测方法">native检测方法</string>
+    <string name="更新">更新</string>
+    <string name="查看记录">查看记录</string>
+    <string name="hook检测">HOOK检测</string>
+    <string name="设备状态">设备状态</string>
+    <string name="获取已安装应用">获取已安装应用</string>
+    <string name="获取系统证书">获取系统证书</string>
+    <string name="获取支持软硬件">获取支持软硬件</string>
+    <string name="汇总">汇总</string>
+    <string name="更新外部存储">更新外部存储</string>
+    <string name="更新内部文件">更新内部文件</string>
+    <string name="传输数据">传输数据</string>
+    <string name="密钥认证">密钥认证</string>
+    <string name="获取完整检测结果">获取完整检测结果</string>
+    <string name="结果图像">结果图像</string>
+    <string name="检测失败">检测失败</string>
+</resources>
